@@ -307,6 +307,19 @@ println(s\"elapsed ms ${t2 - t1}\")}
     (not (empty? (apply clojure.set/intersection
                         (map (comp sums combs) args))))))
 
+(defn same-sum-3 [& args]
+  (letfn [(combs [in]
+            (if (empty? in) #{}
+                (reduce (fn [acc cur]
+                          (clojure.set/union
+                           (conj acc #{cur})
+                           (into #{} (map #(conj %1 cur) acc))
+                           (combs (disj in cur)))) #{} in)))
+          (sums [combs]
+            (into #{} (map #(reduce + %1) combs)))
+          ]
+    (map combs args)))
+
 (= false (same-sum-2 #{1}
              #{2}
              #{3}
@@ -323,7 +336,7 @@ println(s\"elapsed ms ${t2 - t1}\")}
              #{-3 3 7777})) ; ex. all sets have a subset which sums to zero
 
 
- (same-sum #{-10 9 -8 7 -6 5 -4 3 -2 1}
+ (same-sum-2 #{-10 9 -8 7 -6 5 -4 3 -2 1}
              #{10 -9 8 -7 6 -5 4 -3 2 -1})
 
 (comment "
